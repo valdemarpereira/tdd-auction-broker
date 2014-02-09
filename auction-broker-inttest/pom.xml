@@ -18,5 +18,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <artifactId>tdd-auction-broker</artifactId>
+            <groupId>com.valdemar.tddauctionbroker</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <artifactId>auction-broker-gui-text-based</artifactId>
+            <groupId>com.valdemar.tddauctionbroker</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 </project>

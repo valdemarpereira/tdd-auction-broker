@@ -1,5 +1,7 @@
 package com.valdemar.tddauctionbroker;
 
+import static com.valdemar.tddauctionbroker.FakeAuctionServer.XMPP_HOSTNAME;
+import com.valdemar.tddauctionbroker.Main;
 /**
  * Created with IntelliJ IDEA.
  * User: valdemar
@@ -10,7 +12,8 @@ package com.valdemar.tddauctionbroker;
 public class ApplicationRunner {
     public static final String SNIPER_ID = "sniper";
     public static final String SNIPER_PASSWORD = "sniper";
-    private AuctionSniperDriver driver;
+    public static final String SNIPER_XMPP_ID = "sniper@asus-laptop/Auction";
+    //  private AuctionSniperDriver driver;
 
     public void startBiddingIn(final FakeAuctionServer auction) {
         Thread thread = new Thread("Test Application") {
@@ -24,15 +27,20 @@ public class ApplicationRunner {
         };
         thread.setDaemon(true);
         thread.start();
-        driver = new AuctionSniperDriver(1000);
-        driver.showsSniperStatus(Main.STATUS_JOINING);
+//        driver = new AuctionSniperDriver(1000);
+//        driver.showsSniperStatus(Main.STATUS_JOINING);
     }
     public void showsSniperHasLostAuction() {
-        driver.showsSniperStatus(Main.STATUS_LOST);
+//        driver.showsSniperStatus(Main.STATUS_LOST);
     }
     public void stop() {
-        if (driver != null) {
-            driver.dispose();
-        }
+//        if (driver != null) {
+//            driver.dispose();
+//        }
+    }
+
+    public void hasShownSniperIsBidding() {
+
+
     }
 }
