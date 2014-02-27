@@ -1,7 +1,7 @@
 package com.valdemar.tddauctionbroker;
 
 import static com.valdemar.tddauctionbroker.FakeAuctionServer.XMPP_HOSTNAME;
-import com.valdemar.tddauctionbroker.Main;
+
 /**
  * Created with IntelliJ IDEA.
  * User: valdemar
@@ -17,7 +17,8 @@ public class ApplicationRunner {
 
     public void startBiddingIn(final FakeAuctionServer auction) {
         Thread thread = new Thread("Test Application") {
-            @Override public void run() {
+            @Override
+            public void run() {
                 try {
                     Main.main(XMPP_HOSTNAME, SNIPER_ID, SNIPER_PASSWORD, auction.getItemId());
                 } catch (Exception e) {
@@ -30,9 +31,11 @@ public class ApplicationRunner {
 //        driver = new AuctionSniperDriver(1000);
 //        driver.showsSniperStatus(Main.STATUS_JOINING);
     }
+
     public void showsSniperHasLostAuction() {
 //        driver.showsSniperStatus(Main.STATUS_LOST);
     }
+
     public void stop() {
 //        if (driver != null) {
 //            driver.dispose();

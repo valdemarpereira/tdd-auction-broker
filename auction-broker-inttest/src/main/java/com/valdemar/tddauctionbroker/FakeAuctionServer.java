@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsAnything.anything;
 import static org.hamcrest.core.IsNull.notNullValue;
 
 public class FakeAuctionServer {
@@ -49,6 +48,7 @@ public class FakeAuctionServer {
                     }
                 });
     }
+
     // This implementation will fail if no message is received within 5 seconds
     public void assertThatHasReceivedJoinRequestFrom(String sniperId) throws InterruptedException {
         receivesAMessageMatching(sniperId, equalTo(Main.JOIN_COMMAND_FORMAT));
@@ -71,17 +71,15 @@ public class FakeAuctionServer {
     }
 
 
-    public void assertThatHasReceivedBid(int bid, String sniperId) throws InterruptedException
-    {
-               receivesAMessageMatching(sniperId,
+    public void assertThatHasReceivedBid(int bid, String sniperId) throws InterruptedException {
+        receivesAMessageMatching(sniperId,
                 equalTo(String.format(Main.BID_COMMAND_FORMAT, bid)));
     }
 
 
     private void receivesAMessageMatching(String sniperId,
                                           Matcher<? super String> messageMatcher)
-            throws InterruptedException
-    {
+            throws InterruptedException {
         messageListener.receivesAMessage(messageMatcher);
         assertThat(currentChat.getParticipant(), equalTo(sniperId));
     }
@@ -99,8 +97,7 @@ public class FakeAuctionServer {
         }
 
         public void receivesAMessage(Matcher<? super String> messageMatcher)
-                throws InterruptedException
-        {
+                throws InterruptedException {
             final Message message = messages.poll(5, TimeUnit.SECONDS);
             assertThat("Message", message, is(notNullValue()));
             assertThat(message.getBody(), messageMatcher);

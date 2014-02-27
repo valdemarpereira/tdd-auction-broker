@@ -1,10 +1,12 @@
 package com.valdemar.tddauctionbroker;
 
+import com.valdemar.tddauctionbroker.auctionsniper.AuctionEventListener;
+import com.valdemar.tddauctionbroker.auctionsniper.AuctionMessageTranslator;
+import com.valdemar.tddauctionbroker.auctionsniper.AuctionSniper;
+import com.valdemar.tddauctionbroker.auctionsniper.SniperListener;
 import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,12 +15,12 @@ import org.jivesoftware.smack.packet.Message;
  * Time: 18:21
  * To change this template use File | Settings | File Templates.
  */
-public class Main {
+public class Main implements SniperListener {
 
     private static final int ARG_HOSTNAME = 0;
     private static final int ARG_USERNAME = 1;
     private static final int ARG_PASSWORD = 2;
-    private static final int ARG_ITEM_ID  = 3;
+    private static final int ARG_ITEM_ID = 3;
 
     public static final String AUCTION_RESOURCE = "Auction";
     public static final String ITEM_ID_AS_LOGIN = "auction-%s";
@@ -46,24 +48,18 @@ public class Main {
 
     }
 
-    private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException
-    {
-        final Chat chat = connection.getChatManager().createChat(
-                auctionId(itemId, connection),
-                new MessageListener() {
-                    public void processMessage(Chat aChat, Message message) {
-                        showStatus("LOST AUCTION");
-                    }
-                });
+    private void joinAuction(XMPPConnection connection, String itemId) throws XMPPException {
+        final Chat chat = connection.getChatManager().createChat(auctionId(itemId, connection), null);
 
         this.chat = chat;
+        Auction auction = new XMPPAuction(chat);
+        chat.addMessageListener(new AuctionMessageTranslator(connection.getUser(), new AuctionSniper(auction, this)));
 
-        chat.sendMessage(JOIN_COMMAND_FORMAT);
+        auction.join();
     }
 
     private static XMPPConnection connectTo(String hostname, String username, String password)
-            throws XMPPException
-    {
+            throws XMPPException {
         XMPPConnection connection = new XMPPConnection(hostname);
         connection.connect();
         connection.login(username, password, AUCTION_RESOURCE);
@@ -82,5 +78,44 @@ public class Main {
 
     private void showStatus(String status) {
         System.out.println(status);
+    }
+
+
+    @Override
+    public void sniperLost() {
+        System.out.println("Lost the auction");
+    }
+
+    @Override
+    public void sniperBidding(int bidingValue, AuctionEventListener.PriceSource from) {
+        System.out.println("Our Snipper just bid " + bidingValue);
+
+    }
+
+    private static class XMPPAuction implements Auction {
+
+        private final Chat chat;
+
+        public XMPPAuction(Chat chat) {
+            this.chat = chat;
+        }
+
+        @Override
+        public void bid(int amount) {
+            sendMessage(String.format(BID_COMMAND_FORMAT, amount));
+        }
+
+        @Override
+        public void join() {
+            sendMessage(JOIN_COMMAND_FORMAT);
+        }
+
+        private void sendMessage(final String message) {
+            try {
+                chat.sendMessage(message);
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
